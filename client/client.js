@@ -15,6 +15,9 @@ const message = document.querySelector("#message");
 const restartButton = document.querySelector("#RestartButton");
 const serverMessage = document.querySelector("#serverMessage");
 const matchMaking = document.querySelector("#MatchMaking");
+const createSession = document.querySelector("#CreateSession");
+const sessionButtons = document.querySelector("#SessionButtons");
+const joinSession = document.querySelector("#JoinSession");
 const game = document.querySelector("#Game");
 const score = document.querySelector("#Score");
 const playAgain = document.querySelector("#PlayAgain");
@@ -33,9 +36,11 @@ var turn = 0;
 /// server connection.
 ///
 const sock = io();
-
+console.log(sock);
+matchMakingView();
 createGrid();
 drawGrid();
+
 
 function createGrid(){
 	var nextRow = 0;
@@ -119,6 +124,11 @@ function getClickedRect(xOffset, yOffset) {
 	return null;
 }
 
+function matchMakingView() {
+	createSession.style.display = "none";
+	joinSession.style.display = "none";
+}
+
 function resetOnClick() {
 	sock.emit("restartRequest", true);
 	message.innerText = "Request sent!";
@@ -130,6 +140,62 @@ function onYesClick() {
 
 function onNoClick() {
 	sock.emit("restartDenied", true);
+}
+
+function onJoinButtonClicked() {
+	sessionButtons.style.display = "none";
+	createSession.style.display = "none";
+	joinSession.style.display = "block";
+	sock.emit("Get All Session");
+}
+
+function onCreateButtonClicked() {
+	sessionButtons.style.display = "none";
+	createSession.style.display = "block";
+	sock.emit("Create Session", {
+		id: "coolGuy|"+sock.id
+	});
+
+}
+
+function onBackButtonClicked() {
+	sessionButtons.style.display = "block";
+	createSession.style.display = "none";
+	joinSession.style.display = "none";
+}
+
+function displaySessions(sessionList) {
+	var tableBody = document.getElementById("SessionTableBody");
+	tableBody.innerHTML = "";
+	for (var i = 0; i < sessionList.length; i++) {
+		var rowNode = document.createElement("tr");
+
+		if (sessionList[i].player1 != null && sessionList[i].player2 == null) {
+			rowNode.onclick = function (event) {
+				var cell = rowNode.getElementsByTagName("td")[0];
+				var sessionID = cell.innerHTML;
+				sock.emit("Join Session", sessionID);
+			}
+			rowNode.style.cursor = "pointer";
+		}
+
+		var nameCellNode = document.createElement("td");
+		var player1CellNode = document.createElement("td");
+		var player2CellNode = document.createElement("td");
+
+		nameCellNode.innerHTML = sessionList[i].id;
+		player1CellNode.innerHTML = sessionList[i].player1;
+		player2CellNode.innerHTML = (sessionList[i].player2 == null) ? "waiting..." : sessionList[i].player2
+	
+		nameCellNode.style.overflow = "hidden";
+		player1CellNode.style.overflow = "hidden";
+		player2CellNode.style.overflow = "hidden";
+
+		rowNode.appendChild(nameCellNode);
+		rowNode.appendChild(player1CellNode);
+		rowNode.appendChild(player2CellNode);
+		tableBody.appendChild(rowNode);	
+	}
 }
 /*
 *
@@ -183,5 +249,14 @@ sock.on("restartGame", (b) => {
 })
 
 sock.on("restartDenied", (b) => {
+	location.reload();
+})
+
+sock.on("All Sessions", (sessionList) => {
+	console.log(sessionList);
+	displaySessions(sessionList);
+})
+
+sock.on("refresh", () => {
 	location.reload();
 })

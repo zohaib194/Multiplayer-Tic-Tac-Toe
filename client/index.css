@@ -145,3 +145,30 @@ td {
     margin-top: 1rem;
     width: 5rem;
 }
+
+.sessionButtons {
+    margin: 9rem 2rem 0rem 7rem;
+    height: 5rem;
+}
+
+#SessionTable tr{
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#SessionTable thead{
+    display: table;
+}
+
+
+#SessionTable tbody{
+    display: block;
+    height: 23rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.backButton {
+    float: right;
+}

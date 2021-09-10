@@ -27,12 +27,33 @@
 	</div>
 
 	<div id="MatchMaking">
+		<div id="SessionButtons">
+			<button class="sessionButtons" type="button" onclick="onJoinButtonClicked()">Join Session</button>
+			<button class="sessionButtons" type="button" onclick="onCreateButtonClicked()">Create Session</button>
+		</div>
+		<div id="CreateSession">
+			<span id="MMTitle">Match Making</span>
 		
-		<span id="MMTitle">Match Making</span>
-		
-		<div id="loader"></div>
+			<div id="loader"></div>
 
-		<span id="serverMessage"> </span>
+			<span id="serverMessage"> </span>
+		</div>
+		<div id="JoinSession">
+			<table id="SessionTable">
+				<thead>
+					<tr>
+						<th>Session ID</th>
+						<th>Player 1 ID</th>
+						<th>Player 2 ID</th>
+					</tr>
+				</thead>
+				<tbody id="SessionTableBody">
+				</tbody>
+			</table>
+			<div>
+				<button class="backButton" onclick="onBackButtonClicked()">Back</button>
+			</div>
+		</div>
 	
 	</div>
 
